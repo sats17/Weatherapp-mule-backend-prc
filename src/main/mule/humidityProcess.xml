@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:oauth="http://www.mulesoft.org/schema/mule/oauth" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getHumdityByCity" doc:id="cdee6ab9-8d8d-44f4-a527-11559c95db4d">
+		<logger level="INFO" doc:name="Logger" doc:id="b7fd37d3-c441-4ec8-91fe-09b13ee00853" message="#[vars.city]" />
+		<http:request method="GET" doc:name="Request" doc:id="86d3b962-129d-48b6-a33e-031937f7bfb5" config-ref="HumidityRequestConfiguration" path="/weather/humidity">
+			<http:query-params><![CDATA[#[output application/java
+---
+{
+	"city" : attributes.queryParams.city
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="3dd10e7a-f9a9-48b9-ac0e-41db1e86ce49">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"success",
+	"response": payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="7e9742c4-c9f4-486e-b0e5-19a9e9384929" />
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="430492db-4def-40e5-b8e3-302f2d670d90" type="HTTP:NOT_FOUND">
+				<logger level="INFO" doc:name="Logger" doc:id="b7018cb1-7ce2-4339-a4e2-3d598ed42965" message="#[error.errorMessage.payload]" />
+				<ee:transform doc:name="Transform Message" doc:id="e9746444-b118-4bb7-b987-05ee8e666e4f">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"failed",
+	"response":error.errorMessage.payload
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="404" doc:name="Set Variable" doc:id="66ab71b2-4f79-46fa-9bcf-0f117823789a" variableName="statusCode" />
+			</on-error-propagate>
+
+		</error-handler>
+	</flow>
+	<flow name="getHumidityByCityAndDate" doc:id="1c8c4b76-9885-426c-aeaf-b13435d298a2" >
+		<http:request method="GET" doc:name="Request" doc:id="7f3de956-7bc4-45f3-9260-adb47418cd76" config-ref="HumidityRequestConfiguration" path="/weather/humidity/{city}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"city" : attributes.queryParams.city
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"date" : attributes.queryParams.date
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="c4bdb8a0-1504-4360-82d0-019c6a77cddc" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"Success",
+	"Response":payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="f22363ad-571b-4094-b210-ff5164d4d994" type="HTTP:NOT_FOUND" >
+				<logger level="INFO" doc:name="Logger" doc:id="e55930a4-38af-43bd-afa2-4da4784dc302" message="#[error.errorMessage.payload]" />
+				<ee:transform doc:name="Copy_of_Transform Message" doc:id="b7a0f897-f90f-4e2c-9159-f1a79f71ca4f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"failed",
+	"response":error.errorMessage.payload
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<set-variable value="404" doc:name="Set Status Code" doc:id="090474b5-d3cd-4f82-ba24-3c7b0bcb79d8" variableName="statusCode" />
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+</mule>

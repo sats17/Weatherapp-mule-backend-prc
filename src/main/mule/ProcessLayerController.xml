@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+	<flow name="HumidityController" doc:id="179680c0-bce2-4c73-a134-2f3b70295b55" >
+		<http:listener doc:name="Listener" doc:id="24ceec39-48fe-4c2c-b7f1-96eaf9949e24" config-ref="ProcessLayerListner" path="/humidity" allowedMethods="GET">
+			<http:error-response statusCode="#[vars.statusCode default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="f39f08a2-43b7-4e56-b3ef-52698487719d" message="#[attributes.queryParams.city]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="467e9d38-ae18-41d0-b532-6094c96d8384" message="#[attributes]"/>
+		<choice doc:name="Choice" doc:id="639b58fa-209c-42a7-b2f3-17313ec703e9" >
+			<when expression="#[attributes.queryParams.date != null and attributes.queryParams.city != null]">
+				<flow-ref doc:name="Flow Reference" doc:id="a02cb40d-4ccc-45a7-99d6-09bab703ec31" name="getHumidityByCityAndDate"/>
+			</when>
+			<when expression="#[attributes.queryParams.city != null]">
+				<flow-ref doc:name="Flow Reference" doc:id="ca8344b8-9345-4701-92ac-1cc0b99913ff" name="getHumdityByCity"/>
+			</when>
+			<otherwise>
+				<raise-error doc:name="Raise error" doc:id="bcd81401-a627-4e93-be12-29e9e44fa1ec" type="PRECONDITIONS:INCORRECT_REQUEST" description="Enter Proper Request"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="940f4378-835b-493c-a3e4-1cd90e623bda" message="#[payload]"/>
+	</flow>
+</mule>
