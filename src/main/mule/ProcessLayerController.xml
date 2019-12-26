@@ -15,10 +15,10 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:listener>
 		<choice doc:name="Choice" doc:id="639b58fa-209c-42a7-b2f3-17313ec703e9" >
 			<when expression="#[attributes.queryParams.date != null and attributes.queryParams.city != null]">
-				<flow-ref doc:name="Flow Reference" doc:id="a02cb40d-4ccc-45a7-99d6-09bab703ec31" name="getHumidityByCityAndDate"/>
+				<flow-ref doc:name="Get By City And Date" doc:id="a02cb40d-4ccc-45a7-99d6-09bab703ec31" name="getHumidityByCityAndDate"/>
 			</when>
 			<when expression="#[attributes.queryParams.city != null]">
-				<flow-ref doc:name="Flow Reference" doc:id="ca8344b8-9345-4701-92ac-1cc0b99913ff" name="getHumdityByCity"/>
+				<flow-ref doc:name="Get By City" doc:id="ca8344b8-9345-4701-92ac-1cc0b99913ff" name="getHumdityByCity"/>
 			</when>
 			<otherwise>
 				<raise-error doc:name="Raise error" doc:id="0f10e4c2-0026-4cdf-a86b-8a02e843e401" type="WEATHER:URL_NOT_FOUND" description="My description"/>
@@ -26,12 +26,35 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</choice>
 		<logger level="INFO" doc:name="Logger" doc:id="940f4378-835b-493c-a3e4-1cd90e623bda" message="#[payload]"/>
 	</flow>
+	
+	<flow name="RainfallController" doc:id="c34fcaf5-39ad-4e44-83e6-cc7130cd1883" >
+		<http:listener doc:name="Listener" doc:id="dd063d13-7127-4d86-bc98-530f91aa95f1" config-ref="ProcessLayerListner" path="/weather/wind">
+			<http:error-response statusCode="#[vars.statusCode default 500]" >
+				<http:body ><![CDATA[#[payload]]]></http:body>
+			</http:error-response>
+		</http:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="a29eec0e-f2af-49fe-b1bc-cbeee340b4b2" />
+		<choice doc:name="Choice" doc:id="09e70939-b244-482b-b46a-e288428fe41c">
+			<when expression="#[attributes.queryParams.city != null and attributes.queryParams.month != null and attributes.queryParams.units != null]">
+				<flow-ref doc:name="Flow Reference" doc:id="88c6723b-72bd-457c-9287-692af1016c22" name="getMonthlyRainfallAvgByCity" />
+			</when>
+			<when expression="#[attributes.queryParams.city !=null and attributes.queryParams.units !=null]">
+				<flow-ref doc:name="Flow Reference" doc:id="80edef66-ac11-4bf2-9ad4-caefff54c99e" name="getYearlyRainfallAvgByCity" />
+			</when>
+			<otherwise>
+				<flow-ref doc:name="Flow Reference" doc:id="9d161fca-fd56-453e-bd8e-087e65adf3b2" name="getRainfallByCity" />
+			</otherwise>
+		</choice>
+	</flow>
+	
 	<flow name="WeatherController" doc:id="9748284d-7261-4316-9c90-1f7708e035bb" >
 		<http:listener doc:name="Listener" doc:id="1f9589fb-2ddc-40c1-abe7-b8193b3f3d2f" config-ref="ProcessLayerListner" path="/weather">
 			<http:error-response statusCode="#[vars.statusCode default 500]" >
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>
 		</http:listener>
+		<set-variable value="#[attributes.queryParams.city]" doc:name="Set City Variable" doc:id="06d1e093-6ccf-4fc2-ba75-5f57091d2385" variableName="city"/>
+		<set-variable value="#[attributes.queryParams.date]" doc:name="Set Date Variable" doc:id="8541aef2-e5a8-4aea-84cf-6d96a8352519" variableName="date"/>
 		<flow-ref doc:name="Flow Reference" doc:id="ff91cf0f-ca8d-4caa-883a-77e7099bdec5" name="getWeather"/>
 	</flow>
 </mule>

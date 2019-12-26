@@ -33,12 +33,7 @@ output application/json
 output application/json
 ---
 {
-	"Result":{
-		"City":payload.Response.city,
-		"Humidity":payload.Response.humidity,
-		"Date":payload.Response.date
-	}
-	
+	"Humidity":payload.Response.humidity
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
@@ -67,11 +62,10 @@ output application/json
 {
 	"Status":"Success",
 	"Response":{
-		"City":payload."0".payload.Result.City,
-		"Date":payload."0".payload.Result.Date,
-		"Humidity":payload."0".payload.Result.Humidity,
-		"Dummy":payload."1".payload.Result
-	}
+		"City":vars.city,
+		"Date":vars.date,
+		"WeatherData":flatten(payload..payload)
+		}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
