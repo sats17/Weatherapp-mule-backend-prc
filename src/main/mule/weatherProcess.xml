@@ -1,14 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
 	<flow name="getWeather" doc:id="75ef4a26-6ced-47ca-a3c1-6fedf386ff6d" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="e512062d-b74b-4a65-b0f4-861e6b4be675" >
 			<route >
-				<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate"/>
+				<try doc:name="Try" doc:id="fe5d9f38-d319-4166-a5a1-d823a1d7489f" >
+					<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate" />
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d7fcddbd-72e2-4b02-b0eb-cb89a5fd5703" type="HTTP:NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="5918418e-ce21-43e4-9de3-96678364aac9">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status":"Failed"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+					</error-handler>
+				</try>
 				<logger level="INFO" doc:name="Logger" doc:id="7b7cd583-a1c3-4c3f-a48b-6ca6f2e0186d" message="#[payload]"/>
 				<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281" >
 					<ee:message >

@@ -56,15 +56,29 @@ output application/json
 			</ee:transform>
 			<set-variable value="404" doc:name="Set Status Code" doc:id="745db4a0-b34e-4f1d-b45b-6d0bcb73c5b1" variableName="statusCode" />
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4ecdfdaf-bf8e-43f3-a993-b38e7d64596f" type="ANY">
-			<ee:transform doc:name="Transform Message" doc:id="54d55a80-ba52-4f63-9926-178556ff8061" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4ecdfdaf-bf8e-43f3-a993-b38e7d64596f" type="MULE:COMPOSITE_ROUTING">
+			<ee:transform doc:name="Transform Message" doc:id="d49e6bf6-1942-4f1f-897d-8c7476d07ea6" >
 				<ee:message >
 					<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	"Status":"Failed",
-	"Response":"Wrong URL Found"
+	"Response":error.childErrors[0].errorMessage.payload
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="#[error.childErrors[0].errorMessage.attributes.statusCode]" doc:name="Set Variable" doc:id="f40092f4-e854-482a-af29-3edcb676b6f5" variableName="statusCode"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fbb69e4c-2fe5-4d6d-abb1-ade8079155a8" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="54d55a80-ba52-4f63-9926-178556ff8061">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Response":"Internal Server Error"
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
