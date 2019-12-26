@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getWeather" doc:id="75ef4a26-6ced-47ca-a3c1-6fedf386ff6d" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="e512062d-b74b-4a65-b0f4-861e6b4be675" >
+			<route >
+				<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate"/>
+				<logger level="INFO" doc:name="Logger" doc:id="7b7cd583-a1c3-4c3f-a48b-6ca6f2e0186d" message="#[payload]"/>
+				<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Result":{
+		"City":payload.Response.city,
+		"Humidity":payload.Response.humidity,
+		"Date":payload.Response.date
+	}
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="0499978a-cadb-46e3-a292-e65446c6d2a0" message="#[payload]"/>
+			</route>
+			<route >
+				<set-payload value='#["Hiee"]' doc:name="Set Payload" doc:id="e27f9e1b-7143-476c-bd28-831f46913886" />
+				<ee:transform doc:name="Transform Message" doc:id="fc9f0b66-cceb-487f-bdfb-b247884182ba" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Result":"Dummy"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="Logger" doc:id="6fa261e2-70af-4947-b0d7-08618eb5e7ee" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="cb9ca264-a225-4001-bd1c-9e9b00faf9ea" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Success",
+	"Response":{
+		"City":payload."0".payload.Result.City,
+		"Date":payload."0".payload.Result.Date,
+		"Humidity":payload."0".payload.Result.Humidity,
+		"Dummy":payload."1".payload.Result
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
