@@ -12,4 +12,49 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:request-config name="HumidityRequestConfiguration" doc:name="HTTP Request configuration" doc:id="852a03e7-15d0-4a59-9231-96ba29029d74" basePath="/api" >
 		<http:request-connection host="localhost" port="4444" />
 	</http:request-config>
+	<configuration doc:name="Configuration" doc:id="217085a5-02fd-434d-9cd6-caffcc1d39a1" defaultErrorHandler-ref="GlobalConfigurationError_Handler" />
+	<error-handler name="GlobalConfigurationError_Handler" doc:id="a17b7a26-bc33-4cca-8a34-a8b52d44dc05" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="5b797d6f-bf7d-4141-a2cc-0f65e34f4990" type="HTTP:NOT_FOUND">
+			<ee:transform doc:name="Transform Message" doc:id="96d55a66-f0bc-4da3-9c0e-1cb151bb4c6c" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"failed",
+	"Response":error.errorMessage.payload
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="404" doc:name="Set Status Code" doc:id="3dd016ba-2ab4-4b8f-b9ac-be9b79eddef2" variableName="statusCode"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Request Timeout" doc:id="2a72e322-73a0-474f-acd3-f22e4ae9ab7a" type="HTTP:TIMEOUT">
+			<ee:transform doc:name="Transform Message" doc:id="26dfb26c-d071-497c-b6ba-b5fa29179c87">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Response":"Request Time Out"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="408" doc:name="Set Status Code" doc:id="333837e1-cae7-41ec-9c77-0b0aa9868f1c" variableName="statusCode"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="5bd6acd6-7305-4861-8ffa-e22e39e222fa" type="ANY">
+			<ee:transform doc:name="Transform Message" doc:id="fb84b531-441e-4c7c-bb34-dbacfdb283ed">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Response":"Internal Server Error"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="500" doc:name="Set Status Code" doc:id="745db4a0-b34e-4f1d-b45b-6d0bcb73c5b1" variableName="statusCode" />
+		</on-error-propagate>
+	</error-handler>
 </mule>

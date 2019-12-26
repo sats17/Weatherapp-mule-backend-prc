@@ -20,30 +20,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/json
 ---
 {
-	"status":"success",
-	"response": payload
+	"Status":"success",
+	"Response": payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="7e9742c4-c9f4-486e-b0e5-19a9e9384929" />
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="430492db-4def-40e5-b8e3-302f2d670d90" type="HTTP:NOT_FOUND">
-				<logger level="INFO" doc:name="Logger" doc:id="b7018cb1-7ce2-4339-a4e2-3d598ed42965" message="#[error.errorMessage.payload]" />
-				<ee:transform doc:name="Transform Message" doc:id="e9746444-b118-4bb7-b987-05ee8e666e4f">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"status":"failed",
-	"response":error.errorMessage.payload
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-				<set-variable value="404" doc:name="Set Variable" doc:id="66ab71b2-4f79-46fa-9bcf-0f117823789a" variableName="statusCode" />
-			</on-error-propagate>
-
-		</error-handler>
+		
+		
 	</flow>
 	<flow name="getHumidityByCityAndDate" doc:id="1c8c4b76-9885-426c-aeaf-b13435d298a2" >
 		<http:request method="GET" doc:name="Request" doc:id="7f3de956-7bc4-45f3-9260-adb47418cd76" config-ref="HumidityRequestConfiguration" path="/weather/humidity/{city}">
@@ -64,27 +48,10 @@ output application/json
 output application/json
 ---
 {
-	"status":"Success",
+	"Status":"Success",
 	"Response":payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<error-handler>
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="f22363ad-571b-4094-b210-ff5164d4d994" type="HTTP:NOT_FOUND" >
-				<logger level="INFO" doc:name="Logger" doc:id="e55930a4-38af-43bd-afa2-4da4784dc302" message="#[error.errorMessage.payload]" />
-				<ee:transform doc:name="Copy_of_Transform Message" doc:id="b7a0f897-f90f-4e2c-9159-f1a79f71ca4f" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"status":"failed",
-	"response":error.errorMessage.payload
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-				<set-variable value="404" doc:name="Set Status Code" doc:id="090474b5-d3cd-4f82-ba24-3c7b0bcb79d8" variableName="statusCode" />
-			</on-error-propagate>
-		</error-handler>
 	</flow>
 </mule>
