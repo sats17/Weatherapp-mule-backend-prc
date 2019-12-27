@@ -21,14 +21,14 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 				<flow-ref doc:name="Get By City" doc:id="ca8344b8-9345-4701-92ac-1cc0b99913ff" name="getHumdityByCity"/>
 			</when>
 			<otherwise>
-				<raise-error doc:name="Raise error" doc:id="0f10e4c2-0026-4cdf-a86b-8a02e843e401" type="WEATHER:URL_NOT_FOUND" description="My description"/>
+				<raise-error doc:name="Raise error" doc:id="0f10e4c2-0026-4cdf-a86b-8a02e843e401" type="WEATHER:URI_NOT_FOUND" description="My description"/>
 			</otherwise>
 		</choice>
 		<logger level="INFO" doc:name="Logger" doc:id="940f4378-835b-493c-a3e4-1cd90e623bda" message="#[payload]"/>
 	</flow>
 	
 	<flow name="RainfallController" doc:id="c34fcaf5-39ad-4e44-83e6-cc7130cd1883" >
-		<http:listener doc:name="Listener" doc:id="dd063d13-7127-4d86-bc98-530f91aa95f1" config-ref="ProcessLayerListner" path="/weather/wind">
+		<http:listener doc:name="Listener" doc:id="dd063d13-7127-4d86-bc98-530f91aa95f1" config-ref="ProcessLayerListner" path="/weather/rainfall">
 			<http:error-response statusCode="#[vars.statusCode default 500]" >
 				<http:body ><![CDATA[#[payload]]]></http:body>
 			</http:error-response>

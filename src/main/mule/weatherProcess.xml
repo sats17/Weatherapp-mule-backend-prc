@@ -1,62 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd">
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
 	<flow name="getWeather" doc:id="75ef4a26-6ced-47ca-a3c1-6fedf386ff6d" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="e512062d-b74b-4a65-b0f4-861e6b4be675" >
 			<route >
 				<try doc:name="Try" doc:id="fe5d9f38-d319-4166-a5a1-d823a1d7489f" >
 					<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate" />
-					<error-handler >
-						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d7fcddbd-72e2-4b02-b0eb-cb89a5fd5703" type="HTTP:NOT_FOUND">
-				<ee:transform doc:name="Transform Message" doc:id="5918418e-ce21-43e4-9de3-96678364aac9">
+					<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"status":"Failed"
+	"Data":{
+		"Humidity":payload.Response.humidity
+	}
+	
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d7fcddbd-72e2-4b02-b0eb-cb89a5fd5703" type="HTTP:NOT_FOUND">
+							<ee:transform doc:name="Transform Message" doc:id="edf1b5d0-0146-4d87-960d-ac22704996de" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Humidity":null
+	}
+	
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
 			</on-error-continue>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="c30cd60f-139b-460e-84f0-9fe70f2416c9" type="ANY">
+							<ee:transform doc:name="Transform Message" doc:id="e06ae0e8-c9e5-4f60-8488-37103ad3229a" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Humidity":null
+	}
+	
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
 					</error-handler>
 				</try>
-				<logger level="INFO" doc:name="Logger" doc:id="7b7cd583-a1c3-4c3f-a48b-6ca6f2e0186d" message="#[payload]"/>
-				<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	"Humidity":payload.Response.humidity
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="0499978a-cadb-46e3-a292-e65446c6d2a0" message="#[payload]"/>
 			</route>
 			<route >
-				<set-payload value='#["Hiee"]' doc:name="Set Payload" doc:id="e27f9e1b-7143-476c-bd28-831f46913886" />
-				<ee:transform doc:name="Transform Message" doc:id="fc9f0b66-cceb-487f-bdfb-b247884182ba" >
+				<try doc:name="Try" doc:id="ea367752-30b7-4070-925a-70bb0947c18d" >
+					<flow-ref doc:name="Get Rainfall" doc:id="f42632de-7a8c-4424-bf90-08efc6005e8b" name="getMonthlyRainfallAvgByCity"/>
+					<ee:transform doc:name="Transform Message" doc:id="fc9f0b66-cceb-487f-bdfb-b247884182ba">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Data":{
+		"Rainfall":payload.Result.result
+	}
+	
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e0d6b44c-bfb3-471e-b8dd-a3cd5c0dc321" type="HTTP:NOT_ACCEPTABLE">
+							<ee:transform doc:name="Transform Message" doc:id="9c28cb92-2b67-417b-844d-44f59d01005a" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Rainfall":null
+		}
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="06ca94a0-c2f1-4378-a4e2-2570360844df" type="ANY">
+							<ee:transform doc:name="Transform Message" doc:id="2e0c79fd-7dd0-4dfc-bb2e-65cbad45d145" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Rainfall":null
+	}	
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</route>
+		</scatter-gather>
+		<set-variable value="[Failed,Failed]" doc:name="Set Variable" doc:id="a232ecae-3b6c-45d0-8672-7f5380ff25d9" variableName="result"/>
+		<choice doc:name="Choice" doc:id="045509a4-11f4-4d6a-99c0-f3f159fce1da" >
+			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 2]">
+				<raise-error doc:name="Raise error" doc:id="f53c46dc-a935-4c15-a89d-2327907a4685" type="WEATHER:RESOURCE_NOT_FOUND"/>
+			</when>
+			<when expression="#[payload..payload..Status != null]">
+				<ee:transform doc:name="Transform Message" doc:id="575b2ecb-4bb8-4b52-8c47-ab6748462555" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"Result":"Dummy"
+	"Status":"Partial Success",
+	"Response":{
+		"City":vars.city,
+		"Date":vars.date,
+		"WeatherData":payload..payload..Data
+	}
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</route>
-		</scatter-gather>
-		<logger level="INFO" doc:name="Logger" doc:id="6fa261e2-70af-4947-b0d7-08618eb5e7ee" message="#[payload]"/>
-		<ee:transform doc:name="Transform Message" doc:id="cb9ca264-a225-4001-bd1c-9e9b00faf9ea" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="cb9ca264-a225-4001-bd1c-9e9b00faf9ea">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -64,10 +145,12 @@ output application/json
 	"Response":{
 		"City":vars.city,
 		"Date":vars.date,
-		"WeatherData":flatten(payload..payload)
-		}
+		"WeatherData":payload..payload..Data
+	}
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+			</otherwise>
+		</choice>
 	</flow>
 </mule>

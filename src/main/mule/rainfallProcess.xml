@@ -6,7 +6,7 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<flow name="getRainfallByCity" doc:id="ff73395e-c49a-4b7f-90b8-67e2fc0a3ee1" >
-		<http:request method="GET" doc:name="Request" doc:id="9a671931-02c7-409d-a181-b055b5f5e8b3" config-ref="HumidityRequestConfiguration" path="/rainfall">
+		<http:request method="GET" doc:name="Request" doc:id="9a671931-02c7-409d-a181-b055b5f5e8b3" config-ref="RainfallRequestConfiguration" path="/rainfall">
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
@@ -27,11 +27,11 @@ output application/json
 		</ee:transform>
 	</flow>
 	<flow name="getMonthlyRainfallAvgByCity" doc:id="6e248cb8-3706-429c-b342-5dd1aa741df3">
-		<http:request method="GET" doc:name="Request" doc:id="0d902dda-7656-4ee3-ae15-7c3d3834e925" path="/getMonthlyAvgByCity" config-ref="HumidityRequestConfiguration">
+		<http:request method="GET" doc:name="Request" doc:id="0d902dda-7656-4ee3-ae15-7c3d3834e925" path="/getMonthlyAvgByCity" config-ref="RainfallRequestConfiguration">
 			<http:query-params><![CDATA[#[output application/java
 ---
 {
-	"month" : attributes.queryParams.month,
+	"month" : "May",
 	"city" : attributes.queryParams.city,
 	"units" : attributes.queryParams.units
 }]]]></http:query-params>
@@ -49,12 +49,11 @@ output application/json
 			</ee:message>
 		</ee:transform>
 	</flow>
-	<flow name="getYearlyRainfallAvgByCity" doc:id="40ab5c19-b3ae-43e2-90c4-30e996cf3268" >
-		<http:request method="GET" doc:name="Request" doc:id="f324a9d6-a6a2-4d78-92d5-df67ed7cf93f" config-ref="HumidityRequestConfiguration" path="/getYearlyAvgByCity">
+	<flow name="getYearlyRainfallAvgByCity" doc:id="40ab5c19-b3ae-43e2-90c4-30e996cf3268">
+		<http:request method="GET" doc:name="Request" doc:id="f324a9d6-a6a2-4d78-92d5-df67ed7cf93f" config-ref="RainfallRequestConfiguration" path="/getYearlyAvgByCity">
 			<http:query-params><![CDATA[#[output application/java
 ---
 {
-	"" : "",
 	"city" : attributes.queryParams.city,
 	"units" : attributes.queryParams.units
 }]]]></http:query-params>
