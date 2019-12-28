@@ -88,7 +88,21 @@ output application/json
 			</ee:transform>
 			<set-variable value="404" doc:name="Set Variable" doc:id="e317f818-5add-4913-9364-25daaf4d14a5" variableName="statusCode"/>
 		</on-error-propagate>
-		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="27536d42-9f16-4a99-a262-4feb50b92342" type="ANY">
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="27536d42-9f16-4a99-a262-4feb50b92342" type="MULE:EXPRESSION">
+			<ee:transform doc:name="Transform Message" doc:id="e5460dbf-5451-4a2f-b2f3-a8f0ebcf0bea" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Response":"Date format not acceptable."
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<set-variable value="406" doc:name="Set Variable" doc:id="2c351097-fa12-4e18-9ed9-9544ebb87be7" variableName="statusCode"/>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e0617a80-cf29-4826-9370-3b060d30c546" >
 			<ee:transform doc:name="Transform Message" doc:id="54d55a80-ba52-4f63-9926-178556ff8061">
 				<ee:message>
 					<ee:set-payload><![CDATA[%dw 2.0

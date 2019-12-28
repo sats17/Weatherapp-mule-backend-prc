@@ -31,7 +31,7 @@ output application/json
 			<http:query-params><![CDATA[#[output application/java
 ---
 {
-	"month" : "May",
+	"month" : vars.Month,
 	"city" : attributes.queryParams.city,
 	"units" : attributes.queryParams.units
 }]]]></http:query-params>

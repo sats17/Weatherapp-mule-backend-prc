@@ -55,6 +55,22 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:listener>
 		<set-variable value="#[attributes.queryParams.city]" doc:name="Set City Variable" doc:id="06d1e093-6ccf-4fc2-ba75-5f57091d2385" variableName="city"/>
 		<set-variable value="#[attributes.queryParams.date]" doc:name="Set Date Variable" doc:id="8541aef2-e5a8-4aea-84cf-6d96a8352519" variableName="date"/>
+		<ee:transform doc:name="Transform Message" doc:id="e936033d-212e-4d9e-8d7d-792f04139025" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="Month" ><![CDATA[%dw 2.0
+output application/java
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+			  "Aug","Sep","Oct","Nov","Dec"]
+var getMonth = (num) -> {
+	  "Month":months[num - 1]
+}
+---
+getMonth(attributes.queryParams.date.month).Month
+]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="Flow Reference" doc:id="ff91cf0f-ca8d-4caa-883a-77e7099bdec5" name="getWeather"/>
 	</flow>
 </mule>
