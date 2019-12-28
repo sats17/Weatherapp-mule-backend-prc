@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 	<flow name="getWeather" doc:id="75ef4a26-6ced-47ca-a3c1-6fedf386ff6d" >
 		<scatter-gather doc:name="Scatter-Gather" doc:id="e512062d-b74b-4a65-b0f4-861e6b4be675" >
 			<route >
-				<try doc:name="Try" doc:id="fe5d9f38-d319-4166-a5a1-d823a1d7489f" >
+				<try doc:name="Humdity_Try_Clause" doc:id="fe5d9f38-d319-4166-a5a1-d823a1d7489f" >
 					<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate" />
 					<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281">
 					<ee:message>
@@ -62,7 +62,7 @@ output application/json
 				</try>
 			</route>
 			<route >
-				<try doc:name="Try" doc:id="ea367752-30b7-4070-925a-70bb0947c18d" >
+				<try doc:name="Rainfall_Try_Clause" doc:id="ea367752-30b7-4070-925a-70bb0947c18d" >
 					<flow-ref doc:name="Get Rainfall" doc:id="f42632de-7a8c-4424-bf90-08efc6005e8b" name="getMonthlyRainfallAvgByCity"/>
 					<ee:transform doc:name="Transform Message" doc:id="fc9f0b66-cceb-487f-bdfb-b247884182ba">
 					<ee:message>
@@ -111,10 +111,61 @@ output application/json
 					</error-handler>
 				</try>
 			</route>
+			<route >
+				<try doc:name="Temperature_Try_Clause" doc:id="e6ea1e06-4582-46fc-95a4-45fa0b86ed5a" >
+					<flow-ref doc:name="Get Temperature" doc:id="cbdc7a4b-9271-495a-acfa-c97fe1f18fd7" name="getTemperatureflowByCityAndDate"/>
+					<ee:transform doc:name="Transform Message" doc:id="d0062297-3fc4-4545-82cf-74421f286eb1" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Data":{
+		"Temperature":payload.Response.temperature
+	}
+	
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<logger level="INFO" doc:name="Logger" doc:id="49249b93-80c7-48dd-b20d-ad5710bdef65" message="#[payload]"/>
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="db01bf8a-c481-4212-9c00-8619d2078212" type="HTTP:NOT_FOUND">
+							<ee:transform doc:name="Transform Message" doc:id="bf9f9622-8e24-4ca5-b00e-80d776aa7681" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Temperature":null
+		}
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a1dd8e24-2c07-43e3-b27f-075c2ee85353" >
+							<ee:transform doc:name="Transform Message" doc:id="c06c7b53-2bf2-4c00-a595-dd19de2aae23" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"Temperature":null
+		}
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</route>
 		</scatter-gather>
-		<set-variable value="[Failed,Failed]" doc:name="Set Variable" doc:id="a232ecae-3b6c-45d0-8672-7f5380ff25d9" variableName="result"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c50190c8-1426-4a7d-8e64-8c3f2e6c9397" message="Just logger"/>
 		<choice doc:name="Choice" doc:id="045509a4-11f4-4d6a-99c0-f3f159fce1da" >
-			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 2]">
+			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 3]">
 				<raise-error doc:name="Raise error" doc:id="f53c46dc-a935-4c15-a89d-2327907a4685" type="WEATHER:RESOURCE_NOT_FOUND"/>
 			</when>
 			<when expression="#[payload..payload..Status != null]">

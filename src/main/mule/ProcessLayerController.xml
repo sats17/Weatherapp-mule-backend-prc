@@ -47,6 +47,31 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</choice>
 	</flow>
 	
+	<flow name="TemperatureFlow" doc:id="aba0687a-b594-4abd-900c-3d668c57aca3" >
+		<http:listener doc:name="Listener" doc:id="6af008e5-dc10-4cdc-91a4-a19cbb660783" config-ref="ProcessLayerListner" path="/weather/temperature"/>
+		<choice doc:name="Choice" doc:id="68f2a044-59b9-493e-8f3a-d33e94da104f" >
+			<when expression="#[attributes.queryParams.cityName != null and attributes.queryParams.unit ==null and attributes.queryParams.year == null]">
+				<flow-ref doc:name="FlowByCityReference" doc:id="62c4509a-c758-4bbe-ad6d-8a83fff44bfc" name="getTemperatureFlowByCityName"/>
+			</when>
+			<when expression="#[attributes.queryParams.date != null]">
+				<flow-ref doc:name="FlowByDateReference" doc:id="64502b7b-7e8d-4d05-846d-f5df192db8b3" name="getTemperatureByDateFlow"/>
+			</when>
+			<when expression="#[attributes.queryParams.cityName != null and attributes.queryParams.date != null]">
+				<flow-ref doc:name="FlowByCityAndDateReference" doc:id="b7ec3ba4-d6da-427c-b055-db2d4949566d" name="getTemperatureflowByCityAndDate"/>
+			</when>
+			<when expression="#[attributes.queryParams.cityName != null and attributes.queryParams.unit != null]">
+				<flow-ref doc:name="FlowConversionReference" doc:id="85f84ec9-1660-4668-9324-b2c17f65a2da" name="getConvertionFlow"/>
+			</when>
+			<when expression="#[attributes.queryParams.year != null and attributes.queryParams.cityName != null]">
+				<flow-ref doc:name="FlowAverageReference" doc:id="f88ab22e-6e11-4ec4-b939-74d303b98437" name="getAverageByYear"/>
+			</when>
+			<otherwise>
+				<raise-error doc:name="Raise error" doc:id="f36b92f9-8cf1-4a2a-99cc-b52f39e59a20" type="WEATHER:URL_NOT_FOUND" description="My Description"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="a47bde0a-2bc9-421b-b3c5-9aae4d526b8c" />
+	</flow>
+	
 	<flow name="WeatherController" doc:id="9748284d-7261-4316-9c90-1f7708e035bb" >
 		<http:listener doc:name="Listener" doc:id="1f9589fb-2ddc-40c1-abe7-b8193b3f3d2f" config-ref="ProcessLayerListner" path="/weather">
 			<http:error-response statusCode="#[vars.statusCode default 500]" >
@@ -55,11 +80,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</http:listener>
 		<set-variable value="#[attributes.queryParams.city]" doc:name="Set City Variable" doc:id="06d1e093-6ccf-4fc2-ba75-5f57091d2385" variableName="city"/>
 		<set-variable value="#[attributes.queryParams.date]" doc:name="Set Date Variable" doc:id="8541aef2-e5a8-4aea-84cf-6d96a8352519" variableName="date"/>
-		<ee:transform doc:name="Transform Message" doc:id="e936033d-212e-4d9e-8d7d-792f04139025" >
-			<ee:message >
+		<ee:transform doc:name="Transform Month" doc:id="e936033d-212e-4d9e-8d7d-792f04139025">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="Month" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="Month"><![CDATA[%dw 2.0
 output application/java
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul",
 			  "Aug","Sep","Oct","Nov","Dec"]

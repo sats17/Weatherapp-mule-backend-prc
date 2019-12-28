@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	<flow name="getTemperatureFlowByCityName" doc:id="671581db-08f7-41cb-ae2a-baac1cf6b2cd" >
+		<http:request method="GET" doc:name="Request" doc:id="846749d6-d04a-4cc3-b601-42d1d64ff161" config-ref="TemperatureRequestConfiguration" path="/tempByCity">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"cityName" : attributes.queryParams.cityName
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="6e724385-f91f-4813-b5f0-736c928277e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status" : "success",
+	"response" :payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="bda3c239-7cdb-4941-a83c-2e751e430987" message="#[payload]"/>
+	</flow>
+	<flow name="getTemperatureByDateFlow" doc:id="6a762a81-a7c1-4aba-93df-995e9e2a6af4" >
+		<http:request method="GET" doc:name="Request" doc:id="85185d39-72f8-4426-bd55-e7bb6a14fb34" config-ref="TemperatureRequestConfiguration" path="/tempByDate">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"date" : attributes.queryParams.date
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="f2b57193-d0fb-46ed-9893-c11d72ef42c2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status" : "success",
+	"response" :payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4d03b3db-513b-4adb-9719-5ff24524a0c9" />
+	</flow>
+	<flow name="getTemperatureflowByCityAndDate" doc:id="eec7644d-5d92-4797-ab91-d82d53d8bd8f" >
+		<http:request method="GET" doc:name="Request" doc:id="b9c38272-451f-4107-8276-f64f3d925897" config-ref="TemperatureRequestConfiguration" path="/tempByCityAndDate">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"date" : attributes.queryParams.date,
+	"cityName" : attributes.queryParams.city
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="3a2a3118-c546-4d03-9769-caea3950d7e2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status" : "Success",
+	"Response" :payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="5d6fd53d-3812-4fed-aefe-814555331f2b" />
+	</flow>
+	<flow name="getConvertionFlow" doc:id="501ebbed-dbdc-403a-88d7-8b50043bdbf6" >
+		<http:request method="GET" doc:name="Request" doc:id="6f162d6f-a06c-4879-8011-304e60a5588d" config-ref="TemperatureRequestConfiguration" path="/conversion">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"cityName" : attributes.queryParams.cityName,
+	"unit" : attributes.queryParams.unit
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="1a72122f-8641-48fd-b8fa-534b77f6c340" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status" : "success",
+	"response" :payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="0997cbf8-4146-442f-aa09-dfe9ba40cefe" />
+	</flow>
+	<flow name="getAverageByYear" doc:id="08565c95-a11d-4698-a97a-9eed34e9a4cf" >
+		<http:request method="GET" doc:name="Request" doc:id="79c13d59-72d6-4442-b02e-0091bdc82a31" config-ref="TemperatureRequestConfiguration" path="/tempAvg">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"cityName" : attributes.queryParams.cityName,
+	"year" : attributes.queryParams.year
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="bf768517-dc59-402d-aacc-570e06b872e0" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	
+	"status" : "success",
+	"response" : payload
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="28deb7df-b1b6-4903-8d89-a1410bd36283" />
+	</flow>
+		
+	
+		
+</mule>
+	

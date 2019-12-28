@@ -33,17 +33,16 @@ output application/json
 {
 	"month" : vars.Month,
 	"city" : attributes.queryParams.city,
-	"units" : attributes.queryParams.units
+	"units" : attributes.queryParams.rainfallUnit
 }]]]></http:query-params>
 		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="6477b96b-a1f3-41b3-b897-121752acbd8c" />
 		<ee:transform doc:name="Transform Message" doc:id="41b0b387-871c-4fa2-9c32-c7cb24b610ea">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"status":"Success",
+	"Status":"Success",
 	"Result":payload
 }]]></ee:set-payload>
 			</ee:message>
@@ -58,14 +57,13 @@ output application/json
 	"units" : attributes.queryParams.units
 }]]]></http:query-params>
 		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="43252cd5-5bb3-422c-bd25-0c09c49f38e3" />
 		<ee:transform doc:name="Transform Message" doc:id="9b6ff30d-7937-42a0-b6a5-d2d33c1cc7ac">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"status":"Success",
+	"Status":"Success",
 	"Result":payload
 }]]></ee:set-payload>
 			</ee:message>
