@@ -27,7 +27,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="bda3c239-7cdb-4941-a83c-2e751e430987" message="#[payload]"/>
 	</flow>
 	<flow name="getTemperatureByDateFlow" doc:id="6a762a81-a7c1-4aba-93df-995e9e2a6af4" >
 		<http:request method="GET" doc:name="Request" doc:id="85185d39-72f8-4426-bd55-e7bb6a14fb34" config-ref="TemperatureRequestConfiguration" path="/tempByDate">
@@ -48,7 +47,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="4d03b3db-513b-4adb-9719-5ff24524a0c9" />
 	</flow>
 	<flow name="getTemperatureflowByCityAndDate" doc:id="eec7644d-5d92-4797-ab91-d82d53d8bd8f" >
 		<http:request method="GET" doc:name="Request" doc:id="b9c38272-451f-4107-8276-f64f3d925897" config-ref="TemperatureRequestConfiguration" path="/tempByCityAndDate">
@@ -70,7 +68,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="5d6fd53d-3812-4fed-aefe-814555331f2b" />
 	</flow>
 	<flow name="getConvertionFlow" doc:id="501ebbed-dbdc-403a-88d7-8b50043bdbf6" >
 		<http:request method="GET" doc:name="Request" doc:id="6f162d6f-a06c-4879-8011-304e60a5588d" config-ref="TemperatureRequestConfiguration" path="/conversion">
@@ -92,7 +89,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="0997cbf8-4146-442f-aa09-dfe9ba40cefe" />
 	</flow>
 	<flow name="getAverageByYear" doc:id="08565c95-a11d-4698-a97a-9eed34e9a4cf" >
 		<http:request method="GET" doc:name="Request" doc:id="79c13d59-72d6-4442-b02e-0091bdc82a31" config-ref="TemperatureRequestConfiguration" path="/tempAvg">
@@ -116,7 +112,6 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="28deb7df-b1b6-4903-8d89-a1410bd36283" />
 	</flow>
 		
 	

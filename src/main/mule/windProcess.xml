@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	<flow name="GetWindByCityNameAndUnit" doc:id="0ea0002e-9f7c-4ebb-b84e-ee849d9a96e9" >
+		<http:request method="GET" doc:name="GET_Wind_Data /GET" doc:id="82a01e54-305f-4556-a566-656251dbb934" config-ref="WindRequestConfiguration" path="/city/{cityName}/showRecord">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"cityName" : attributes.queryParams.city
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"unit" : attributes.queryParams.unit
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="af006853-0d21-4cc6-b6a4-23111637b07f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status" : "Success" ,
+	"Response" : payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		
+	</flow>
+	<flow name="GetWindByCityNameAndDate" doc:id="ff46fc64-001b-438c-8f71-e741e6c0581e" >
+		<http:request method="GET" doc:name="GET_WindData /GET" doc:id="ad17afa4-7266-4de9-bdc8-72ce55310ba9" config-ref="WindRequestConfiguration" path="/city/{cityName}/{date}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"date" : attributes.queryParams.date,
+	"cityName" : attributes.queryParams.city
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="0b51517a-e521-4fa5-9ae1-8ef6d982cda8" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status" : "Success",
+	"Response" : payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="GetWindByCityName" doc:id="4f203212-645f-43da-b111-4f8291cde051" >
+		<http:request method="GET" doc:name="GET_Wind_Data /GET" doc:id="3abdf28d-1e86-41b1-85b9-2766127b4303" config-ref="WindRequestConfiguration" path="/city/{cityName}/showRecord" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"cityName" : attributes.queryParams.city
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="4b4ca427-384a-4bdd-a87e-4eadee1e0316" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status" : "Success" ,
+	"Response" : payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+		
+</mule>

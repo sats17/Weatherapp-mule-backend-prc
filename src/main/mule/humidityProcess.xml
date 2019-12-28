@@ -25,7 +25,6 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="7e9742c4-c9f4-486e-b0e5-19a9e9384929" />
 		
 		
 	</flow>

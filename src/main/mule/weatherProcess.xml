@@ -122,12 +122,10 @@ output application/json
 {
 	"Data":{
 		"Temperature":payload.Response.temperature
-	}
-	
+	}	
 }]]></ee:set-payload>
 						</ee:message>
 					</ee:transform>
-					<logger level="INFO" doc:name="Logger" doc:id="49249b93-80c7-48dd-b20d-ad5710bdef65" message="#[payload]"/>
 					<error-handler >
 						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="db01bf8a-c481-4212-9c00-8619d2078212" type="HTTP:NOT_FOUND">
 							<ee:transform doc:name="Transform Message" doc:id="bf9f9622-8e24-4ca5-b00e-80d776aa7681" >
@@ -162,10 +160,59 @@ output application/json
 					</error-handler>
 				</try>
 			</route>
+			<route >
+				<try doc:name="Wind_Try_Clause" doc:id="b1c2f30b-2d48-4ebd-a12e-87ad88526f32" >
+					<flow-ref doc:name="Get Wind" doc:id="c4c67726-4993-47e7-90eb-67e0d1c21541" name="GetWindByCityNameAndDate"/>
+					<ee:transform doc:name="Transform Message" doc:id="59058c00-c185-4899-8570-5a70f089280f" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Data":{
+		"WindRate":payload.Response.windRate
+	}	
+}]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+					<error-handler >
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d926c6fc-9680-4b6a-81c9-5f3267ac2275" type="HTTP:NOT_FOUND">
+							<ee:transform doc:name="Transform Message" doc:id="f62ee7cc-8859-4ddd-ab69-740737bf7aad" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"WindRate":null
+		}
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+						<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d12adf38-a760-4758-aeab-837513b48e12" type="ANY">
+							<ee:transform doc:name="Transform Message" doc:id="65e7574c-54c3-4616-96e2-5843cf624fc4" >
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failed",
+	"Data":{
+		"WindRate":null
+		}
+}]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+						</on-error-continue>
+					</error-handler>
+				</try>
+			</route>
 		</scatter-gather>
 		<logger level="INFO" doc:name="Logger" doc:id="c50190c8-1426-4a7d-8e64-8c3f2e6c9397" message="Just logger"/>
 		<choice doc:name="Choice" doc:id="045509a4-11f4-4d6a-99c0-f3f159fce1da" >
-			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 3]">
+			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 4]">
 				<raise-error doc:name="Raise error" doc:id="f53c46dc-a935-4c15-a89d-2327907a4685" type="WEATHER:RESOURCE_NOT_FOUND"/>
 			</when>
 			<when expression="#[payload..payload..Status != null]">
@@ -196,7 +243,7 @@ output application/json
 	"Response":{
 		"City":vars.city,
 		"Date":vars.date,
-		"WeatherData":payload..payload..Data
+		"WeatherData":payload..payload..Data..
 	}
 }]]></ee:set-payload>
 			</ee:message>

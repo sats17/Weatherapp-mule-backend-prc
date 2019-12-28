@@ -20,6 +20,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:request-config name="TemperatureRequestConfiguration" doc:name="HTTP Request configuration" doc:id="f109cc6d-3314-436c-b093-e5cac3a369de">
 		<http:request-connection host="${host}" port="${temperature_port}" />
 	</http:request-config>
+	<http:request-config name="WindRequestConfiguration" doc:name="HTTP Request configuration" doc:id="d37e717d-c1fb-4979-964c-1d586994d865" basePath="/api" >
+		<http:request-connection host="${host}" port="${wind_port}" />
+	</http:request-config>
 	<error-handler name="GlobalConfigurationError_Handler" doc:id="a17b7a26-bc33-4cca-8a34-a8b52d44dc05" >
 		<on-error-propagate enableNotifications="true" logException="true" doc:name="On City Not Found" doc:id="5b797d6f-bf7d-4141-a2cc-0f65e34f4990" type="HTTP:NOT_FOUND">
 			<ee:transform doc:name="Transform Message" doc:id="96d55a66-f0bc-4da3-9c0e-1cb151bb4c6c" >

@@ -13,7 +13,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"city" : attributes.queryParams.city
 }]]]></http:query-params>
 		</http:request>
-		<logger level="INFO" doc:name="Logger" doc:id="7b1d5fc9-701e-495a-8251-30dbe3a98a2b" message="#[payload]"/>
 		<ee:transform doc:name="Transform Message" doc:id="9d783515-0154-407c-9f1c-bb48c368ddb5" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
