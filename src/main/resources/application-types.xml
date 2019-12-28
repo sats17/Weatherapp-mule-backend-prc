@@ -1,5 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
-  <types:catalog/>
-  <types:enrichment select="#e936033d-212e-4d9e-8d7d-792f04139025"/>
+  <types:catalog>
+    <types:type name="month" format="java">
+      <types:shape format="raml"><![CDATA[#%RAML 1.0 DataType
+type: string]]></types:shape>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#5cf476d1-75e1-4312-9125-1a03be80c002">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:attributes type="month"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

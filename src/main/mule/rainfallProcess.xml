@@ -26,11 +26,30 @@ output application/json
 		</ee:transform>
 	</flow>
 	<flow name="getMonthlyRainfallAvgByCity" doc:id="6e248cb8-3706-429c-b342-5dd1aa741df3">
+		<ee:transform doc:name="Transform Message" doc:id="5cf476d1-75e1-4312-9125-1a03be80c002" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="customMonth" ><![CDATA[%dw 2.0
+output application/java
+var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+			  "Aug","Sep","Oct","Nov","Dec"]
+var getMonth = (num) -> {
+	  "Month":months[num - 1]
+}
+---
+if(attributes.queryParams.date == null)
+	attributes.queryParams.month as String
+else
+	getMonth(attributes.queryParams.date.month).Month]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="7de638f6-eb22-4027-932c-a936b1b26bde" message="#[vars.customMonth]"/>
 		<http:request method="GET" doc:name="Request" doc:id="0d902dda-7656-4ee3-ae15-7c3d3834e925" path="/getMonthlyAvgByCity" config-ref="RainfallRequestConfiguration">
 			<http:query-params><![CDATA[#[output application/java
 ---
 {
-	"month" : vars.Month,
+	"month" : vars.customMonth,
 	"city" : attributes.queryParams.city,
 	"units" : attributes.queryParams.rainfallUnit
 }]]]></http:query-params>

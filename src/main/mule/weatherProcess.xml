@@ -243,7 +243,7 @@ output application/json
 	"Response":{
 		"City":vars.city,
 		"Date":vars.date,
-		"WeatherData":payload..payload..Data..
+		"WeatherData":payload..payload..Data
 	}
 }]]></ee:set-payload>
 			</ee:message>
