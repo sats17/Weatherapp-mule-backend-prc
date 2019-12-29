@@ -60,7 +60,7 @@ output application/json
 ---
 {
 	"Status":"Failed",
-	"Response":"Internal Server Error"
+	"Response":"Resource Not Found"
 }]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
