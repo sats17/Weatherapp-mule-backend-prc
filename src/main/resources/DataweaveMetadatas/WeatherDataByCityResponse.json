@@ -1,0 +1,162 @@
+{
+  "0": {
+    "inboundAttachmentNames": [],
+    "exceptionPayload": null,
+    "inboundPropertyNames": [],
+    "outboundAttachmentNames": [],
+    "payload": {
+      "Data": {
+        "Humidity": [
+          {
+            "city": "mumbai",
+            "humidity": 13.89,
+            "date": "2011-05-11"
+          }
+        ]
+      }
+    },
+    "outboundPropertyNames": [],
+    "attributes": {
+      "headers": {
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 09 Jan 2020 10:34:25 GMT",
+        "keep-alive": "timeout=60",
+        "connection": "keep-alive"
+      },
+      "reasonPhrase": "",
+      "statusCode": 200
+    }
+  },
+  "1": {
+    "inboundAttachmentNames": [],
+    "exceptionPayload": null,
+    "inboundPropertyNames": [],
+    "outboundAttachmentNames": [],
+    "payload": {
+      "Data": {
+        "Rainfall": {
+          "timestamp": "2020-01-09T10:34:25.039+0000",
+          "result": [
+            {
+              "id": 2,
+              "month": "May",
+              "rain": 23.0,
+              "city": "Mumbai"
+            }
+          ],
+          "success": true,
+          "httpCodeMessage": "OK"
+        }
+      }
+    },
+    "outboundPropertyNames": [],
+    "attributes": {
+      "headers": {
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 09 Jan 2020 10:34:25 GMT",
+        "keep-alive": "timeout=60",
+        "connection": "keep-alive"
+      },
+      "reasonPhrase": "",
+      "statusCode": 200
+    }
+  },
+  "2": {
+    "inboundAttachmentNames": [],
+    "exceptionPayload": null,
+    "inboundPropertyNames": [],
+    "outboundAttachmentNames": [],
+    "payload": {
+      "Data": {
+        "Temperature": [
+          {
+            "id": 4,
+            "date": "2011-05-11",
+            "temperature": 29.4,
+            "city": {
+              "id": 1,
+              "cityName": "Mumbai",
+              "latitude": 19.076,
+              "longitude": 72.8777
+            }
+          },
+          {
+            "id": 2,
+            "date": "2019-01-01",
+            "temperature": 29.4,
+            "city": {
+              "id": 1,
+              "cityName": "Mumbai",
+              "latitude": 19.076,
+              "longitude": 72.8777
+            }
+          },
+          {
+            "id": 3,
+            "date": "2019-05-11",
+            "temperature": 29.4,
+            "city": {
+              "id": 1,
+              "cityName": "Mumbai",
+              "latitude": 19.076,
+              "longitude": 72.8777
+            }
+          }
+        ]
+      }
+    },
+    "outboundPropertyNames": [],
+    "attributes": {
+      "headers": {
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 09 Jan 2020 10:34:25 GMT",
+        "keep-alive": "timeout=60",
+        "connection": "keep-alive"
+      },
+      "reasonPhrase": "",
+      "statusCode": 200
+    }
+  },
+  "3": {
+    "inboundAttachmentNames": [],
+    "exceptionPayload": null,
+    "inboundPropertyNames": [],
+    "outboundAttachmentNames": [],
+    "payload": {
+      "Data": {
+        "WindRate": [
+          {
+            "windId": 3,
+            "windRate": 20.0,
+            "date": "2019-01-01"
+          },
+          {
+            "windId": 5,
+            "windRate": 20.0,
+            "date": "2019-01-02"
+          },
+          {
+            "windId": 6,
+            "windRate": 20.0,
+            "date": "2011-05-11"
+          }
+        ]
+      }
+    },
+    "outboundPropertyNames": [],
+    "attributes": {
+      "headers": {
+        "content-type": "application/json",
+        "transfer-encoding": "chunked",
+        "date": "Thu, 09 Jan 2020 10:34:25 GMT",
+        "keep-alive": "timeout=60",
+        "connection": "keep-alive"
+      },
+      "reasonPhrase": "",
+      "statusCode": 200
+    }
+  }
+}

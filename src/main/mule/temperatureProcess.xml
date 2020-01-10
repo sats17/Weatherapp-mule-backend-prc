@@ -13,7 +13,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
-	"cityName" : attributes.queryParams.cityName
+	"cityName" : attributes.queryParams.city
 }]]]></http:query-params>
 		</http:request>
 		<ee:transform doc:name="Transform Message" doc:id="6e724385-f91f-4813-b5f0-736c928277e2" >
@@ -22,8 +22,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 output application/json
 ---
 {
-	"status" : "success",
-	"response" :payload
+	"Status" : "Success",
+	"Response" :payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -42,8 +42,8 @@ output application/json
 output application/json
 ---
 {
-	"status" : "success",
-	"response" :payload
+	"Status" : "Success",
+	"Response" :payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -74,7 +74,7 @@ output application/json
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
-	"cityName" : attributes.queryParams.cityName,
+	"cityName" : attributes.queryParams.city,
 	"unit" : attributes.queryParams.unit
 }]]]></http:query-params>
 		</http:request>
@@ -84,8 +84,8 @@ output application/json
 output application/json
 ---
 {
-	"status" : "success",
-	"response" :payload
+	"Status" : "Success",
+	"Response" :payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -95,7 +95,7 @@ output application/json
 			<http:query-params ><![CDATA[#[output application/java
 ---
 {
-	"cityName" : attributes.queryParams.cityName,
+	"cityName" : attributes.queryParams.city,
 	"year" : attributes.queryParams.year
 }]]]></http:query-params>
 		</http:request>
@@ -106,8 +106,8 @@ output application/json
 ---
 {
 	
-	"status" : "success",
-	"response" : payload
+	"Status" : "Success",
+	"Response" : payload
 }
 ]]></ee:set-payload>
 			</ee:message>

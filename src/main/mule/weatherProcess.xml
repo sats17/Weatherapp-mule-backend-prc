@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
 		<scatter-gather doc:name="Scatter-Gather" doc:id="e512062d-b74b-4a65-b0f4-861e6b4be675" >
 			<route >
 				<try doc:name="Humdity_Try_Clause" doc:id="fe5d9f38-d319-4166-a5a1-d823a1d7489f" >
-					<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="getHumidityByCityAndDate" />
+					<flow-ref doc:name="GetHumidity" doc:id="f2e75e36-6041-423b-b9df-779a6db3c9d1" name="HumidityController" />
 					<ee:transform doc:name="Transform Message" doc:id="36c4d74c-835e-435f-82e2-5c69171ad281">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -19,7 +19,7 @@ output application/json
 ---
 {
 	"Data":{
-		"Humidity":payload.Response.humidity
+		"Humidity":payload.Response
 	}
 	
 }]]></ee:set-payload>
@@ -63,7 +63,7 @@ output application/json
 			</route>
 			<route >
 				<try doc:name="Rainfall_Try_Clause" doc:id="ea367752-30b7-4070-925a-70bb0947c18d" >
-					<flow-ref doc:name="Get Rainfall" doc:id="f42632de-7a8c-4424-bf90-08efc6005e8b" name="getMonthlyRainfallAvgByCity"/>
+					<flow-ref doc:name="Get Rainfall" doc:id="f42632de-7a8c-4424-bf90-08efc6005e8b" name="RainfallController"/>
 					<ee:transform doc:name="Transform Message" doc:id="fc9f0b66-cceb-487f-bdfb-b247884182ba">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -71,7 +71,7 @@ output application/json
 ---
 {
 	"Data":{
-		"Rainfall":payload.Result.result
+		"Rainfall":payload.Response
 	}
 	
 }]]></ee:set-payload>
@@ -113,7 +113,7 @@ output application/json
 			</route>
 			<route >
 				<try doc:name="Temperature_Try_Clause" doc:id="e6ea1e06-4582-46fc-95a4-45fa0b86ed5a" >
-					<flow-ref doc:name="Get Temperature" doc:id="cbdc7a4b-9271-495a-acfa-c97fe1f18fd7" name="getTemperatureflowByCityAndDate"/>
+					<flow-ref doc:name="Get Temperature" doc:id="cbdc7a4b-9271-495a-acfa-c97fe1f18fd7" name="TemperatureFlow"/>
 					<ee:transform doc:name="Transform Message" doc:id="d0062297-3fc4-4545-82cf-74421f286eb1" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -121,7 +121,7 @@ output application/json
 ---
 {
 	"Data":{
-		"Temperature":payload.Response.temperature
+		"Temperature":payload.Response
 	}	
 }]]></ee:set-payload>
 						</ee:message>
@@ -162,7 +162,7 @@ output application/json
 			</route>
 			<route >
 				<try doc:name="Wind_Try_Clause" doc:id="b1c2f30b-2d48-4ebd-a12e-87ad88526f32" >
-					<flow-ref doc:name="Get Wind" doc:id="c4c67726-4993-47e7-90eb-67e0d1c21541" name="GetWindByCityNameAndDate"/>
+					<flow-ref doc:name="Get Wind" doc:id="c4c67726-4993-47e7-90eb-67e0d1c21541" name="WindController"/>
 					<ee:transform doc:name="Transform Message" doc:id="59058c00-c185-4899-8570-5a70f089280f" >
 						<ee:message >
 							<ee:set-payload ><![CDATA[%dw 2.0
@@ -170,7 +170,7 @@ output application/json
 ---
 {
 	"Data":{
-		"WindRate":payload.Response.windRate
+		"WindRate":payload.Response
 	}	
 }]]></ee:set-payload>
 						</ee:message>
@@ -210,24 +210,70 @@ output application/json
 				</try>
 			</route>
 		</scatter-gather>
-		<logger level="INFO" doc:name="Logger" doc:id="c50190c8-1426-4a7d-8e64-8c3f2e6c9397" message="Just logger"/>
+		<logger level="INFO" doc:name="Logger" doc:id="c50190c8-1426-4a7d-8e64-8c3f2e6c9397" message="#[[attributes.queryParams.date ]]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="692fd82c-bb79-45cf-8c21-8f103ea5bdea" message="#[payload..payload..Status]"/>
 		<choice doc:name="Choice" doc:id="045509a4-11f4-4d6a-99c0-f3f159fce1da" >
 			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 4]">
 				<raise-error doc:name="Raise error" doc:id="f53c46dc-a935-4c15-a89d-2327907a4685" type="WEATHER:RESOURCE_NOT_FOUND"/>
 			</when>
-			<when expression="#[payload..payload..Status != null]">
+			<when expression="#[payload..payload..Status != null and attributes.queryParams.date == null]">
 				<ee:transform doc:name="Transform Message" doc:id="575b2ecb-4bb8-4b52-8c47-ab6748462555" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
-{
-	"Status":"Partial Success",
-	"Response":{
-		"City":vars.city,
-		"Date":vars.date,
-		"WeatherData":payload..payload..Data
-	}
+	{ 
+		Status:"Partial Success",
+		Response:{
+	
+			Humidity: payload."0".payload.Data.Humidity map ( humidity , indexOfHumidity ) -> {
+				humidity: humidity.humidity,
+				date: humidity.date
+			},
+        	Rainfall: payload."1".payload.Data.Rainfall.result map ( result , indexOfResult ) -> {
+		        month: result.month,
+		        rain: result.rain
+	        },
+	        Temperature: payload."2".payload.Data.Temperature map ( temperature , indexOfTemperature ) -> {
+		        date: temperature.date,
+		        temperature: temperature.temperature
+	        },
+	        WindRate: payload."3".payload.Data.WindRate map ( windRate , indexOfWindRate ) -> {
+		        windRate: windRate.windRate,
+		        date: windRate.date
+	  }
+   }
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression="#[payload..payload..Status == null and attributes.queryParams.date == null]">
+				<ee:transform doc:name="Transform Message" doc:id="5aeb86b4-4a0a-4736-a20e-c2bedb1f390c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+	{ 
+		Status:"Success",
+		Response:{
+	
+			Humidity: payload."0".payload.Data.Humidity map ( humidity , indexOfHumidity ) -> {
+				humidity: humidity.humidity,
+				date: humidity.date
+			},
+        	Rainfall: payload."1".payload.Data.Rainfall.result map ( result , indexOfResult ) -> {
+		        month: result.month,
+		        rain: result.rain
+	        },
+	        Temperature: payload."2".payload.Data.Temperature map ( temperature , indexOfTemperature ) -> {
+		        date: temperature.date,
+		        temperature: temperature.temperature
+	        },
+	        WindRate: payload."3".payload.Data.WindRate map ( windRate , indexOfWindRate ) -> {
+		        windRate: windRate.windRate,
+		        date: windRate.date
+	  }
+   }
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>

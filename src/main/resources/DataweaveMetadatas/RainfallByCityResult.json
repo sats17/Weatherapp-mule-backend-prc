@@ -1,0 +1,15 @@
+{
+    "timestamp": "2020-01-09T07:02:16.734+0000",
+    "result": [
+      {
+        "id": 2,
+        "month": "May",
+        "rain": 23.0,
+        "city": "Mumbai"
+      }
+    ],
+    "success": true,
+    "errors": null,
+    "httpCodeMessage": "OK"
+  
+}

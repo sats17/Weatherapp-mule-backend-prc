@@ -13,14 +13,33 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	"city" : attributes.queryParams.city
 }]]]></http:query-params>
 		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="284a21f7-acb8-4bd1-a292-5c0d37b405d3" message="#[payload]"/>
 		<ee:transform doc:name="Transform Message" doc:id="9d783515-0154-407c-9f1c-bb48c368ddb5" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
+	timestamp: payload.timestamp,
+	result: payload.result map ( result , indexOfResult ) -> {
+		id: result.id,
+		month: result.month,
+		rain: result.rain,
+		city: result.city.cityName
+	},
+	success: payload.success,
+	httpCodeMessage: (payload.errors as Stringdefault "") ++ payload.httpCodeMessage
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="6b5bdd2c-352d-4be7-ae7a-318f7bdfaa5d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
 	"Status":"Success",
-	"Result":payload
+	"Response":payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -34,9 +53,8 @@ output application/json
 output application/java
 var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul",
 			  "Aug","Sep","Oct","Nov","Dec"]
-var getMonth = (num) -> {
-	  "Month":months[num - 1]
-}
+var getMonth = (num) -> 
+	months[num - 1]
 ---
 if(attributes.queryParams.date == null)
 	attributes.queryParams.month as String
@@ -61,7 +79,7 @@ output application/json
 ---
 {
 	"Status":"Success",
-	"Result":payload
+	"Response":payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -82,7 +100,7 @@ output application/json
 ---
 {
 	"Status":"Success",
-	"Result":payload
+	"Response":payload
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

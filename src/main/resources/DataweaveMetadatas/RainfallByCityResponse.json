@@ -1,0 +1,20 @@
+{
+    "timestamp": "2020-01-09T07:02:16.734+0000",
+    "result": [
+      {
+        "id": 2,
+        "month": "May",
+        "rain": 23.0,
+        "city": {
+          "cityId": 1,
+          "cityName": "Mumbai",
+          "longitude": 0.8727506190027051,
+          "latitude": 0.30818293781945116
+        }
+      }
+    ],
+    "success": true,
+    "errors": null,
+    "httpCodeMessage": "OK"
+  
+}
