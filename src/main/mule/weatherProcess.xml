@@ -216,7 +216,7 @@ output application/json
 			<when expression="#[payload..payload..Status != null and sizeOf(payload..payload..Status) == 4]">
 				<raise-error doc:name="Raise error" doc:id="f53c46dc-a935-4c15-a89d-2327907a4685" type="WEATHER:RESOURCE_NOT_FOUND"/>
 			</when>
-			<when expression="#[payload..payload..Status != null and attributes.queryParams.date == null]">
+			<when expression="#[payload..payload..Status != null and vars.date == null]">
 				<ee:transform doc:name="Transform Message" doc:id="575b2ecb-4bb8-4b52-8c47-ab6748462555" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
@@ -247,7 +247,7 @@ output application/json
 					</ee:message>
 				</ee:transform>
 			</when>
-			<when expression="#[payload..payload..Status == null and attributes.queryParams.date == null]">
+			<when expression="#[payload..payload..Status == null and vars.date == null]">
 				<ee:transform doc:name="Transform Message" doc:id="5aeb86b4-4a0a-4736-a20e-c2bedb1f390c" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
